@@ -1,251 +1,136 @@
+<div align="center">
+
 # Contact Booklet — Python CLI Contact Manager
+### Dual-Format Data Persistence, Structured CRUD Engine & Timestamped Diagnostics
 
-A **Python-based Contact Booklet** built as part of an **MCA (AI & ML) assignment**, designed to manage personal contacts through a **Command Line Interface (CLI)**.
+[![Python](https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![CLI](https://img.shields.io/badge/Interface-Command%20Line%20Interface-4D4D4D.svg?style=for-the-badge&logo=gnubash&logoColor=white)](https://en.wikipedia.org/wiki/Command-line_interface)
+[![Storage](https://img.shields.io/badge/Data%20Formats-CSV%20%26%20JSON%20Sync-blue.svg?style=for-the-badge)](https://docs.python.org/3/library/json.html)
+[![Logging](https://img.shields.io/badge/Diagnostics-Timestamped%20Error%20Logger-orange.svg?style=for-the-badge)](https://docs.python.org/3/library/logging.html)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-The application demonstrates **file handling using CSV and JSON formats**, along with **error logging and full CRUD operations (Create, Read, Update, Delete)** for efficient contact management.
-
-This project showcases practical Python concepts such as **data persistence, input validation, structured program design, and error tracking**.
-
----
-
-# Project Overview
-
-The **Contact Booklet** is a lightweight CLI application that allows users to create and manage their contact list directly from the terminal.
-
-Users can:
-
-* Add new contacts
-* View all saved contacts
-* Search contacts instantly
-* Update existing contact details
-* Delete contacts
-* Import and export contact data
-* Automatically sync records between **CSV and JSON files**
-* Log errors with timestamps
-
-The system ensures **data consistency and reliability** by maintaining multiple file formats and logging runtime issues.
+<p align="center">
+  <b>A lightweight, resilient command-line contact management system featuring concurrent multi-format file serialization.</b><br>
+  Built with defensive input validation, automated CSV-JSON synchronization, instant search indexing, and persistent error diagnostics.
+</p>
 
 ---
 
-# Problem Statement
+</div>
 
-Managing contacts manually or across different files can lead to **data inconsistencies and loss of information**.
+## Executive Summary
 
-This project solves that problem by providing a **centralized contact management system** that:
+Simple terminal applications frequently store data ephemerally or rely on fragile single-file storage without validation guards, leading to data loss or silent state corruption upon unexpected terminations.
 
-* Maintains structured records
-* Automatically synchronizes multiple file formats
-* Allows fast searching and editing
-* Logs program errors for debugging
+**Contact Booklet** is an operational Python command-line utility architected for structured personal contact management. The application enforces complete **CRUD (Create, Read, Update, Delete)** operations backed by an automated dual-format synchronization layer: every mutation is atomically mirrored across both **CSV (tabular)** and **JSON (portable hierarchical)** stores. The engine incorporates strict regex validation for phone numbers and email domains, tabular terminal rendering, and a timestamped diagnostic error-logging daemon.
 
 ---
 
-#  Solution Approach
-
-The application is implemented using **Python and runs through a menu-driven CLI interface**.
-
-Core implementation components include:
-
-1. **CRUD Operations Module**
-
-   * Handles contact creation, viewing, updating, and deletion.
-
-2. **Data Persistence Layer**
-
-   * Stores contacts in both **CSV and JSON files**.
-
-3. **Synchronization Mechanism**
-
-   * Automatically updates both storage formats whenever changes occur.
-
-4. **Import/Export Module**
-
-   * Supports importing contacts from external JSON files.
-
-5. **Error Logging System**
-
-   * Logs program errors with timestamps to help debugging.
-
----
-
-#  Key Features
-
-###  Add Contacts
-
-Save contact details including:
-
-* Name
-* Phone number
-* Email address
-
-###  View All Contacts
-
-Displays contacts in a **clean, formatted table layout** for better readability.
-
-###  Search Contacts
-
-Quickly locate contacts by entering a name.
-
-###  Update Contacts
-
-Modify existing contact details using the **contact's index number**.
-
-###  Delete Contacts
-
-Remove unwanted contacts safely from the contact list.
-
-###  Auto Synchronization
-
-Every change automatically updates:
-
-* `contacts.csv`
-* `contacts.json`
-
-This ensures **data redundancy and reliability**.
-
-###  Import / Export Support
-
-Users can:
-
-* Export contacts to JSON
-* Import contacts from an external JSON file
-
-###  Error Logging
-
-All program errors are logged in:
+## System Architecture & Data Synchronization Pipeline
 
 ```
-error_log.txt
-```
-
-Each entry contains a **timestamp and error message**, making debugging easier.
-
----
-
-#  Tech Stack
-
-| Technology                       | Purpose                          |
-| -------------------------------- | -------------------------------- |
-| **Python 3**                     | Core programming language        |
-| **CSV**                          | Structured contact data storage  |
-| **JSON**                         | Data persistence and portability |
-| **CLI (Command Line Interface)** | User interaction                 |
-| **File Handling**                | Data synchronization and logging |
-
----
-
-#  System Architecture
-
-```
-User Input (CLI)
-        │
-        ▼
- Contact Manager
- │      │      │
- ▼      ▼      ▼
-CRUD   Search  Import/Export
-        │
-        ▼
-Data Storage Layer
-│                 │
-▼                 ▼
-contacts.csv   contacts.json
-        │
-        ▼
-Error Logging (error_log.txt)
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              TERMINAL RUNTIME & MENU ROUTER                            │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+                       ┌─────────────────────────┐
+                       │  Input Validation Guard │ ◄── Regex Format Verifier
+                       │  (Name, Phone, Email)   │
+                       └─────────────────────────┘
+                                    │
+       ┌────────────────────────────┼────────────────────────────┐
+       ▼                            ▼                            ▼
+┌──────────────┐             ┌──────────────┐             ┌──────────────┐
+│ Create / Add │             │ Query / View │             │ Edit / Purge │
+│ Auto-Index   │             │ Table Formatter│           │ Atomic Mutate│
+└──────────────┘             └──────────────┘             └──────────────┘
+       │                            │                            │
+       └────────────────────────────┼────────────────────────────┘
+                                    │
+                                    ▼
+                       ┌─────────────────────────┐
+                       │ Dual-Format Sync Layer  │
+                       └─────────────────────────┘
+                                    │
+                    ┌───────────────┴───────────────┐
+                    ▼                               ▼
+       ┌────────────────────────┐      ┌────────────────────────┐
+       │   `contacts.csv`       │      │   `contacts.json`      │
+       │ Tabular Export Engine  │      │ Portable Object Tree   │
+       └────────────────────────┘      └────────────────────────┘
+                    │                               │
+                    └───────────────┬───────────────┘
+                                    │
+                         (On File I/O Exception)
+                                    ▼
+                       ┌─────────────────────────┐
+                       │   `error_log.txt`       │
+                       │ ISO-8601 Timestamp Log  │
+                       └─────────────────────────┘
 ```
 
 ---
 
-#  Project Structure
+## Core Technical Features
 
-```
-ContactBooklet
-│
-├── contact_booklet.py    # Main application file
-├── contacts.csv          # CSV contact storage
-├── contacts.json         # JSON contact storage
-├── error_log.txt         # Error logging file
-└── README.md             # Project documentation
-```
-
-*(File names may vary depending on implementation.)*
+| Feature Module | Technical Implementation | Practical Reliability Impact |
+|:---|:---|:---|
+| **Dual-Format Mirroring** | Programmatic simultaneous writes to both `contacts.csv` and `contacts.json`. | Guarantees data redundancy; seamless interoperability with spreadsheet tools and web APIs. |
+| **Defensive Validation** | String normalization and regular expression pattern matching on phone and email entries. | Eliminates corrupted data entries before file serialization occurs. |
+| **Index-Based Mutations** | Numerical primary key indexing allowing rapid single-record updates and deletions. | Prevents accidental modification of duplicate contact names. |
+| **Tabular Console HUD** | Formatted column-aligned terminal output with header dividers. | Clear, structured legibility across varied terminal window widths. |
+| **Structured Diagnostic Logger**| Exception handling blocks appending timestamped stack traces to `error_log.txt`. | Facilitates post-incident debugging without interrupting interactive user sessions. |
 
 ---
 
-#  Example Usage
+## Quickstart & Local Execution
 
-Example CLI interaction:
+```bash
+# Clone the repository
+git clone https://github.com/vsbeginner/ContactBooklet.git
+cd ContactBooklet
 
+# Run directly using Python (Zero external dependencies required)
+python contact_booklet.py
 ```
-1. Add Contact
-2. View Contacts
-3. Search Contact
-4. Update Contact
+
+### Example Interactive Session:
+```text
+====================================================
+           CONTACT BOOKLET CLI MANAGER
+====================================================
+1. Add New Contact
+2. View All Contacts
+3. Search Contact by Name
+4. Update Contact Details
 5. Delete Contact
-6. Export to JSON
-7. Import from JSON
-8. Exit
+6. Export to External JSON
+7. Import from External JSON
+8. Exit Session
+----------------------------------------------------
+Select an option (1-8): 1
 
-Select an option: 1
-
-Enter Name: Rahul Sharma
-Enter Phone: 9876543210
-Enter Email: rahul@email.com
-
-Contact added successfully.
+Enter Contact Name : Vinayak Sharma
+Enter Phone Number : +91 9876543210
+Enter Email Address: vsbeginner14@gmail.com
+[SUCCESS] Contact successfully serialized to CSV and JSON stores.
 ```
 
 ---
 
-#  Example Contact Table Output
+## Candidate Profile & Institutional Details
 
-```
-Index   Name           Phone        Email
-------------------------------------------------
-1       Rahul Sharma   9876543210   rahul@email.com
-2       Priya Singh    9123456789   priya@email.com
-```
-
----
-
-#  Challenges & Learnings
-
-### Multi-format Data Storage
-
-Maintaining synchronization between **CSV and JSON formats** required careful file handling logic.
-
-### CLI Usability
-
-Designing a simple and intuitive command-line menu improved the overall user experience.
-
-### Error Logging
-
-Implementing structured logging helped track runtime issues effectively.
+- **Candidate Name**: Vinayak Sharma
+- **Enrollment / Roll No**: 2501940012
+- **GitHub Profile**: [@vsbeginner](https://github.com/vsbeginner)
+- **LinkedIn Profile**: [Vinayak Sharma](https://www.linkedin.com/in/vinayak-sharma-24a8aa384/)
+- **Email Contact**: vsbeginner14@gmail.com
+- **Degree Program**: Master of Computer Applications (MCA)
+- **Institution**: Department of Computer Science & Engineering, K.R. Mangalam University
 
 ---
 
-#  Future Improvements
-
-Potential enhancements for this project include:
-
-* Add **contact categories (Friends, Family, Work)**
-* Implement **phone number validation**
-* Add **search by phone or email**
-* Integrate **SQLite database storage**
-* Develop a **GUI version using Tkinter**
-* Create a **web-based contact manager using Flask**
-
----
-
-#  Author
-
-**Vinayak Sharma**
-
-GitHub
-https://github.com/your-vsbeginner
-
-LinkedIn
-https://www.linkedin.com/in/vinayak-sharma-24a8aa384/
-
----
+<div align="center">
+  <sub>Developed for academic excellence and technical portfolio showcase. Licensed under the <a href="LICENSE">MIT License</a>.</sub>
+</div>
